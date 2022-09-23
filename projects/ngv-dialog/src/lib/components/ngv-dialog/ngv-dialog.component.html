@@ -1,0 +1,8 @@
+<div class="ngv-dialog" id="ngv-dialog">
+  <div (click)="backDropClick()" [class]="'back-drop ' + options.backDropStyle"></div>
+  <div [ngStyle]="{padding: options.space + 'px'}"
+       class="ngv-dialog-content-wrapper">
+
+    <ng-container #container></ng-container>
+  </div>
+</div>
