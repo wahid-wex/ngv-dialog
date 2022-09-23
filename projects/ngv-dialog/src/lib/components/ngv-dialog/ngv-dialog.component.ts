@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, ViewChild, ViewContainerRef } from '@angular/core';
 import { BehaviorSubject, Subject, Subscription } from 'rxjs';
-import { NGV_DIALOG_TEMPLATE_TOKEN ,NGV_DIALOG_CLOSE_TOKEN } from '../../classes';
-import { TemplateCarrierType , NgvDialogOptionModel } from '../../models';
+import { NGV_DIALOG_CLOSE_TOKEN, NGV_DIALOG_TEMPLATE_TOKEN } from '../../classes';
+import { NgvDialogOptionModel, TemplateCarrierType } from '../../models';
 
 @Component({
   selector: 'ngv-dialog',

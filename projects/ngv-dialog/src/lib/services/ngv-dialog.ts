@@ -2,8 +2,8 @@ import { ComponentFactory, ComponentFactoryResolver, inject, Injectable, Injecto
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
 import { NgvDialogComponent } from '../components/ngv-dialog/ngv-dialog.component';
-import { NGV_DIALOG_ROUTES_BRIDGE_TOKEN , NGV_DIALOG_TEMPLATE_TOKEN , NGV_DIALOG_CLOSE_TOKEN } from '../classes';
-import { TemplateCarrierType , NgvRoutesConfig , NgvDialogOptionModel , OverlayModel } from '../models';
+import { NGV_DIALOG_CLOSE_TOKEN, NGV_DIALOG_ROUTES_BRIDGE_TOKEN, NGV_DIALOG_TEMPLATE_TOKEN } from '../classes';
+import { NgvDialogOptionModel, NgvRoutesConfig, OverlayModel, TemplateCarrierType } from '../models';
 
 @Injectable({
   providedIn: 'root'
@@ -48,6 +48,7 @@ export class NgvDialog implements OverlayModel {
   routesConfig: NgvRoutesConfig = inject(NGV_DIALOG_ROUTES_BRIDGE_TOKEN);
   router = inject(ActivatedRoute);
   transformedFragments = {};
+
   /*--------------------------------------------------------------------------------------------------------------------------------------*/
 
   constructor() {
