@@ -15,16 +15,16 @@ export class NgvDialog implements OverlayModel {
    * these three properties help us to inject NgvDialogComponent into the root
    * @class NgvDialogComponent
    */
-  componentFactoryResolver = inject(ComponentFactoryResolver);
-  injector = inject(Injector);
-  factory: ComponentFactory<NgvDialogComponent>;
+  private componentFactoryResolver = inject(ComponentFactoryResolver);
+  private injector = inject(Injector);
+  private factory: ComponentFactory<NgvDialogComponent>;
   /*--------------------------------------------------------------------------------------------------------------------------------------*/
 
   // after close observer
-  afterClose$: Subject<any> = new Subject();
+  private afterClose$: Subject<any> = new Subject();
 
   // list of custom elements that is open
-  componentsOpenedNameList: string[] = [];
+  private componentsOpenedNameList: string[] = [];
 
   /**
    * ---------------------------------------------------------------------------------------------------------------------------------------
@@ -32,8 +32,8 @@ export class NgvDialog implements OverlayModel {
    * @property templateBridge$ closeBridge$
    * @class NgvDialogComponent
    */
-  templateBridge$: BehaviorSubject<TemplateCarrierType> = inject(NGV_DIALOG_TEMPLATE_TOKEN);
-  closeBridge$: Subject<void> = inject(NGV_DIALOG_CLOSE_TOKEN);
+  private templateBridge$: BehaviorSubject<TemplateCarrierType> = inject(NGV_DIALOG_TEMPLATE_TOKEN);
+  private closeBridge$: Subject<void> = inject(NGV_DIALOG_CLOSE_TOKEN);
   /*--------------------------------------------------------------------------------------------------------------------------------------*/
 
   /**
@@ -45,9 +45,9 @@ export class NgvDialog implements OverlayModel {
    * contains list of routes that we got it from routesConfig, we fill transformedFragments but in form of an object
    * so that we don't have to make redundant iteration
    */
-  routesConfig: NgvRoutesConfig = inject(NGV_DIALOG_ROUTES_BRIDGE_TOKEN);
-  router = inject(ActivatedRoute);
-  transformedFragments = {};
+  private routesConfig: NgvRoutesConfig = inject(NGV_DIALOG_ROUTES_BRIDGE_TOKEN);
+  private router = inject(ActivatedRoute);
+  private transformedFragments = {};
 
   /*--------------------------------------------------------------------------------------------------------------------------------------*/
 
@@ -92,7 +92,7 @@ export class NgvDialog implements OverlayModel {
     this.factory = null;
   }
 
-  init(): void {
+  private init(): void {
     const name = 'ngv-dialog-container-' + Math.floor(Math.random() * 100000);
     this.componentsOpenedNameList.push(name);
     // make a dummy element.
@@ -104,7 +104,7 @@ export class NgvDialog implements OverlayModel {
     this.factory.create(this.injector, [], el);
   }
 
-  openAutomationByRoutes(): void {
+  private openAutomationByRoutes(): void {
     if (!this.routesConfig?.list.length) {
       return;
     }
@@ -112,16 +112,21 @@ export class NgvDialog implements OverlayModel {
     this.openSheetWhenFragmentMatches();
   }
 
-  transformFragments(): void {
+  private transformFragments(): void {
+    const defaultOption = {backDropClose: true, backDropStyle: 'blur' , space: 16};
+    const userConfig = this.routesConfig.options;
     this.routesConfig.list.map(route => {
-      this.transformedFragments[route.fragment] = route.component;
+      this.transformedFragments[route.fragment] = {
+        component: route.component,
+        option: {...defaultOption , ...userConfig}
+      };
     });
   }
 
-  openSheetWhenFragmentMatches(): void {
+  private openSheetWhenFragmentMatches(): void {
     this.router.fragment.subscribe(fragment => {
       if (this.transformedFragments.hasOwnProperty(fragment)) {
-        this.open(this.transformedFragments[fragment]);
+        this.open(this.transformedFragments[fragment].component, this.transformedFragments[fragment].option);
       }
     });
   }
