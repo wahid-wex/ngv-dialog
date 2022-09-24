@@ -4,7 +4,7 @@ import { NgvDialogComponent } from './components/ngv-dialog/ngv-dialog.component
 import { BehaviorSubject, Subject } from 'rxjs';
 import { NGV_DIALOG_CLOSE_TOKEN, NGV_DIALOG_ROUTES_BRIDGE_TOKEN, NGV_DIALOG_TEMPLATE_TOKEN } from './classes';
 import { NgvRoutesConfig, TemplateCarrierType } from './models';
-import { RouterTestingModule } from '@angular/router/testing';
+import { RouterModule } from '@angular/router';
 
 @NgModule({
   declarations: [
@@ -12,10 +12,7 @@ import { RouterTestingModule } from '@angular/router/testing';
   ],
   imports: [
     CommonModule,
-    RouterTestingModule
-  ],
-  exports: [
-    RouterTestingModule
+    RouterModule.forRoot([])
   ],
   providers: [
     {
