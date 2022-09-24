@@ -1,27 +1,116 @@
 # NgvDialog
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 14.2.1.
+An open source library for angular , generated in angular 14
 
-## Development server
+## How to use ?
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
 
-## Code scaffolding
+* `npm install ngv-dialog` - to install package in your project.
+* In your AppModule import the NgvDialogModule
+* then in your component use `NgvDialog` to work with that
+```ts
+import { NgvDialogModule } from 'ngv-dialog';
+imports: [
+    ...
+      NgvDialogModule,
+    ...
+]
+```
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+```ts
+import { NgvDialog } from 'ngv-dialog';
+@Component({
+  selector: 'app-component',
+  templateUrl: './app.component.html',
+  styleUrls: ['./app.component.scss']
+})
+export class AppComponent implements OnInit {
+  ngvDialog = inject(NgvDialog);
+  openDialog(): void {
+    this.ngvDialog.open(MyExampleComponent)
+  }
+}
 
-## Build
+```
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
+* you can set some configuration like the below code :
+* `backDropClose` - a boolean value , to be able to close dialog by click to backdrop.
+* `space` - a number value , the space around dialog sheet and content.
+* `backDropStyle` - a string value , could be `none` for default value , `blur` and `gray`.
 
-## Running unit tests
+```ts
+this.ngvDialog.open(MyExampleComponent, {
+  backDropClose: true,
+  space: 16,
+  backDropStyle: 'blur',
+})
+```
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+* you can close dialog by use `close('your message')` that could be any type and send a message to close subscriber.
 
-## Running end-to-end tests
+```ts
+this.ngvDialog.open(MyExampleComponent).afterClose().subscribe(closeMessage => {
+  // there will got 'my close message could be any type'
+})
 
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
+// and in the MyExampleComponent you can close it
+ closeAction(): void {
+  this.ngvDialog.close('my close message could be any type')
+}
+```
 
-## Further help
+* as you can see at below code, use can use set a data to use it when dialog opened.
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+```ts
+this.ngvDialog.open(MyExampleComponent, {
+  data: {
+    userData: {
+      gitHub: 'https://github.com/wahidwex'
+    }
+  }
+})
+```
+```ts
+import { NgvDialog } from 'ngv-dialog';
+@Component({
+  selector: 'app-component',
+  templateUrl: './app.component.html',
+  styleUrls: ['./app.component.scss']
+})
+export class MyExampleComponent implements OnInit {
+  ngvDialog = inject(NgvDialog);
+  ngOnInit(): void {
+    const data = this.ngvDialog.getData();
+    ...
+  }
+}
+```
+
+## How to open dialog by routes?
+
+* when you want to import the module , which will open your dialog as you want , like below
+```ts
+import { NgvDialogModule } from 'ngv-dialog';
+imports: [
+    ...
+      NgvDialogModule.setRoutes({
+      options : {
+        backDropClose: true,
+        space: 16,
+        backDropStyle: 'blur',
+      },
+      list: [
+        {
+          fragment: 'article',
+          component: ArticleComponent
+        },
+        {
+          fragment: 'example',
+          component: MyExampleComponent
+        },
+      ],
+    }),
+    ...
+]
+```
+* so when you want to open `MyExampleComponent` you just need to add `example` fragment ...
