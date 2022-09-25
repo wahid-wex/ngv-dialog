@@ -1,5 +1,5 @@
 import { ComponentFactory, ComponentFactoryResolver, inject, Injectable, Injector } from '@angular/core';
-import { BehaviorSubject, Observable, Subject } from 'rxjs';
+import { BehaviorSubject, Subject } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
 import { NgvDialogComponent } from '../components/ngv-dialog/ngv-dialog.component';
 import { NGV_DIALOG_CLOSE_TOKEN, NGV_DIALOG_ROUTES_BRIDGE_TOKEN, NGV_DIALOG_TEMPLATE_TOKEN } from '../classes';
@@ -77,8 +77,15 @@ export class NgvDialog implements OverlayModel {
     return this.templateBridge$.getValue().options.data;
   }
 
-  afterClose(): Observable<any> {
-    return this.afterClose$.asObservable();
+  afterClose(): Promise<any> {
+    // because of that subject and observables able to send multiple values
+    // we must use promise limit
+    // so , don't use subject.asObservable
+    return new Promise((resolve) => {
+      this.afterClose$.subscribe(res => {
+        resolve(res);
+      });
+    });
   }
 
   close(e?): void {
@@ -113,12 +120,12 @@ export class NgvDialog implements OverlayModel {
   }
 
   private transformFragments(): void {
-    const defaultOption = {backDropClose: true, backDropStyle: 'blur' , space: 16};
+    const defaultOption = {backDropClose: true, backDropStyle: 'blur', space: 16};
     const userConfig = this.routesConfig.options;
     this.routesConfig.list.map(route => {
       this.transformedFragments[route.fragment] = {
         component: route.component,
-        option: {...defaultOption , ...userConfig}
+        option: {...defaultOption, ...userConfig}
       };
     });
   }

@@ -49,7 +49,7 @@ this.ngvDialog.open(MyExampleComponent, {
 * you can close dialog by use `close('your message')` that could be any type and send a message to close subscriber.
 
 ```ts
-this.ngvDialog.open(MyExampleComponent).afterClose().subscribe(closeMessage => {
+this.ngvDialog.open(MyExampleComponent).afterClose().then(closeMessage => {
   // there will got 'my close message could be any type'
 })
 
