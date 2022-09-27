@@ -3,7 +3,7 @@ import { BehaviorSubject, Subject } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
 import { NgvDialogComponent } from '../components/ngv-dialog/ngv-dialog.component';
 import { NGV_DIALOG_CLOSE_TOKEN, NGV_DIALOG_ROUTES_BRIDGE_TOKEN, NGV_DIALOG_TEMPLATE_TOKEN } from '../classes';
-import { NgvDialogOptionModel, NgvRoutesConfig, OverlayModel, TemplateCarrierType } from '../models';
+import { NgvDialogOptionModel, NgvRoutesConfig, OpenedDialogModel, OverlayModel, TemplateCarrierType } from '../models';
 
 @Injectable({
   providedIn: 'root'
@@ -24,7 +24,7 @@ export class NgvDialog implements OverlayModel {
   private afterClose$: Subject<any> = new Subject();
 
   // list of custom elements that is open
-  private componentsOpenedNameList: string[] = [];
+  private componentsOpenedNameList: OpenedDialogModel[] = [];
 
   /**
    * ---------------------------------------------------------------------------------------------------------------------------------------
@@ -46,7 +46,7 @@ export class NgvDialog implements OverlayModel {
    * so that we don't have to make redundant iteration
    */
   private routesConfig: NgvRoutesConfig = inject(NGV_DIALOG_ROUTES_BRIDGE_TOKEN);
-  private router = inject(ActivatedRoute);
+  private route = inject(ActivatedRoute);
   private transformedFragments = {};
 
   /*--------------------------------------------------------------------------------------------------------------------------------------*/
@@ -63,11 +63,11 @@ export class NgvDialog implements OverlayModel {
     this.openAutomationByRoutes();
   }
 
-  open(component: any, options: NgvDialogOptionModel = {backDropClose: true, backDropStyle: 'blur'}): this {
+  open(component: any, options: NgvDialogOptionModel = {backDropClose: true, backDropStyle: 'blur'}, byFragment = false): this {
     // make it empty , use case: when we have two dialog open and last dialog carrying last data options and components
     this.templateBridge$.next(null);
     // create basic of load dialog
-    this.init();
+    this.init(byFragment);
     // tell bridge what component u should load inside of dialog by what options
     this.templateBridge$.next({component, options});
     return this;
@@ -89,19 +89,24 @@ export class NgvDialog implements OverlayModel {
   }
 
   close(e?): void {
+    const lastComponent = this.componentsOpenedNameList.pop();
     // tell user what's ur data after close
     this.afterClose$.next(e);
     // clear bridge
     this.templateBridge$.next(null);
-    const el = document.getElementsByTagName(this.componentsOpenedNameList.pop())[0];
+    const el = document.getElementsByTagName(lastComponent.name)[0];
     // remove factory holder and dummy element
     el?.remove();
     this.factory = null;
+    // here we check if dialog opened by fragment we will remove fragment
+    if (lastComponent.byFragment) {
+      this.removeFragment();
+    }
   }
 
-  private init(): void {
+  private init(byFragment): void {
     const name = 'ngv-dialog-container-' + Math.floor(Math.random() * 100000);
-    this.componentsOpenedNameList.push(name);
+    this.componentsOpenedNameList.push({name, byFragment});
     // make a dummy element.
     const el = document.createElement(name);
     // push dummy to body.
@@ -131,10 +136,14 @@ export class NgvDialog implements OverlayModel {
   }
 
   private openSheetWhenFragmentMatches(): void {
-    this.router.fragment.subscribe(fragment => {
+    this.route.fragment.subscribe(fragment => {
       if (this.transformedFragments.hasOwnProperty(fragment)) {
-        this.open(this.transformedFragments[fragment].component, this.transformedFragments[fragment].option);
+        this.open(this.transformedFragments[fragment].component, this.transformedFragments[fragment].option, true);
       }
     });
+  }
+
+  removeFragment(): void {
+    window.location.hash = '';
   }
 }
