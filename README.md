@@ -2,6 +2,15 @@
 
 An open source library for angular , generated in angular 14
 
+## Why Ngv Dialog ?
+
+* it's open source.
+* you can open dialog by routes and service that we provided before ...
+* you can set attributes like space and clickable back-drop etc .
+* you don't need to add any component tag in your code .
+* you will use just a service to work with package and nothing else .
+
+
 ## How to use ?
 
 
@@ -11,9 +20,9 @@ An open source library for angular , generated in angular 14
 ```ts
 import { NgvDialogModule } from 'ngv-dialog';
 imports: [
-    ...
-      NgvDialogModule,
-    ...
+  ...
+    NgvDialogModule,
+  ...
 ]
 ```
 
@@ -54,7 +63,7 @@ this.ngvDialog.open(MyExampleComponent).afterClose().then(closeMessage => {
 })
 
 // and in the MyExampleComponent you can close it
- closeAction(): void {
+closeAction(): void {
   this.ngvDialog.close('my close message could be any type')
 }
 ```
@@ -81,7 +90,7 @@ export class MyExampleComponent implements OnInit {
   ngvDialog = inject(NgvDialog);
   ngOnInit(): void {
     const data = this.ngvDialog.getData();
-    ...
+  ...
   }
 }
 ```
@@ -92,8 +101,8 @@ export class MyExampleComponent implements OnInit {
 ```ts
 import { NgvDialogModule } from 'ngv-dialog';
 imports: [
-    ...
-      NgvDialogModule.setRoutes({
+  ...
+    NgvDialogModule.setRoutes({
       options : {
         backDropClose: true,
         space: 16,
@@ -110,7 +119,7 @@ imports: [
         },
       ],
     }),
-    ...
+  ...
 ]
 ```
 * so when you want to open `MyExampleComponent` you just need to add `example` fragment ...
